@@ -1,0 +1,55 @@
+name: 'Run build and tests'
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build:
+   runs-on: ubuntu-latest
+   steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Run Makefile
+        run: make
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: program
+          path: program
+          retention-days: 1
+  test_setup:
+    runs-on: ubuntu-latest
+    outputs:
+      test_list: ${{ steps.get_list.outputs.TESTS_JSON }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Install jq
+        run: |-
+          apt-get update
+          apt-get install jq
+      - name: Get list of tests
+        id: get_list
+        run: |-
+          export TESTS_JSON=$(find ./tests -type f -exec test -x {} \; -print | jq -Rsc 'gsub("\\s*$";"") | split("\n") | sort')
+          echo "TESTS_JSON=$TESTS_JSON" >> $GITHUB_OUTPUT
+  test:
+    runs-on: ubuntu-latest
+    needs: [build, test-setup]
+    strategy:
+      fail-fast: true
+      matrix:
+        test: ${{ fromJSON(jobs.test_setup.outputs.test_list) }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Run Makefile
+        run: make
+      - name: Run test
+        run: |-
+          ${{ matrix.test }} "$(pwd)"/program
