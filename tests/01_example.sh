@@ -1,4 +1,4 @@
-#!/urs/bin/env bash
+#!/usr/bin/env bash
 
 # (The absolute path to the program is provided as the first and only argument.)
 PROGRAM=$1
