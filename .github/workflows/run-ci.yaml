@@ -29,10 +29,6 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
-      - name: Install jq
-        run: |-
-          apt-get update
-          apt-get install jq
       - name: Get list of tests
         id: get_list
         run: |-
