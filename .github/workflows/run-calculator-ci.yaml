@@ -47,4 +47,5 @@ jobs:
           make
       - name: Run test
         run: |-
-          ${{ matrix.test }} "$(pwd)/program -q"
+          cd calculator
+          ${{ matrix.test }} "$(pwd)/calculator -q"
