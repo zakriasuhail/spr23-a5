@@ -1,4 +1,4 @@
-###Calculator program
+### Calculator program
 
 This program should be invoked by running:
 `./calculator <num> <operation> <num>`
