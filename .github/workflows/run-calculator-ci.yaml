@@ -1,4 +1,4 @@
-name: 'Run build and tests'
+name: 'Run calculator build and tests'
 on:
   push:
   workflow_dispatch:
@@ -15,13 +15,9 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v3
       - name: Run Makefile
-        run: make
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: program
-          path: program
-          retention-days: 1
+        run: |-
+          cd calculator
+          make
   test_setup:
     runs-on: ubuntu-latest
     outputs:
@@ -32,6 +28,7 @@ jobs:
       - name: Get list of tests
         id: get_list
         run: |-
+          cd calculator
           export TESTS_JSON=$(find ./tests -type f -exec test -x {} \; -print | jq -Rsc 'gsub("\\s*$";"") | split("\n") | sort')
           echo "TESTS_JSON=$TESTS_JSON" >> $GITHUB_OUTPUT
   test:
@@ -45,7 +42,9 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v3
       - name: Run Makefile
-        run: make
+        run: |-
+          cd calculator
+          make
       - name: Run test
         run: |-
-          ${{ matrix.test }} "$(pwd)"/program
+          ${{ matrix.test }} "$(pwd)/program -q"
