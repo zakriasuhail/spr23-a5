@@ -51,4 +51,4 @@ jobs:
           OUTPUT_RUNS=True python3 your_tests.py | tee ./output.txt \
             && grep -q "TEST RUN:" ./output.txt \
             && rm -f output.txt \
-          || echo "Either your tests failed or you didn't write any!"
+          || (echo "ERROR: Either your tests failed or you didn't write any!" && false)
