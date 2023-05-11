@@ -1,4 +1,4 @@
-name: 'Run calculator build and tests'
+name: 'Calculator CI'
 on:
   push:
   workflow_dispatch:
